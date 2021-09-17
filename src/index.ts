@@ -2,10 +2,12 @@ import Spotify from "spotify-web-api-js";
 import fs from "fs/promises";
 import * as http from "http";
 import open from "open";
-import {startSort} from "./Sort";
+import {initialize} from "./Sort";
 
 export const api = new Spotify();
 
+// using a client side library sounds dumb, and it is dumb, but we are using the client side auth flow here so idk i guess
+// it makes sense
 // @ts-ignore this is fine
 global.XMLHttpRequest = require('xhr2');
 // @ts-ignore this is fine
@@ -29,30 +31,21 @@ const webServer = http.createServer((req, res) => {
         let body = "";
 
         req.on("readable", () => {
-            body += req.read();
-        })
+            const read = req.read();
+            if (read) {
+                body += read;
+            }
+        });
 
         req.on("end", () => {
-            api.setAccessToken(body.trim());
-            console.log(`"${body.trim()}"`)
+            api.setAccessToken(body);
             res.end();
-
             webServer.close();
 
-            console.log("Token found!");
+            console.log("Connected.")
 
-            api.getUserPlaylists().then(lists => console.log(lists.items.map(list => list.name))).catch(err => console.error(err.response))
-
-            //api.getMyCurrentPlayingTrack().then(track => {
-            //    if (track.item) {
-            //        console.log(`Currently listening ${track.item.name} on ${track.item.album.name} ${track.progress_ms! / 1000}s`);
-            //    } else {
-            //        console.log("Not listening anything at the moment");
-            //    }
-            //}).catch(console.error)
-
-            startSort();
-        })
+            initialize();
+        });
     }
 });
 webServer.listen(8080);
@@ -70,4 +63,5 @@ const SCOPES = [
 const URL = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES.join("%20")}&response_type=token&show_dialog=true`;
 open(URL).then();
 
-console.log("Spotify playlist sorter")
+console.log("Spotify Playlist Sorter")
+console.log("Connect your Account in your browser...")
