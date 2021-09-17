@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Sorter</title>
+</head>
+<body>
+You can close this window now.
+<script>
+    const hash = window.location.hash
+        .substring(1)
+        .split("&")
+        .reduce((initial, item) => {
+            if (item) {
+                const parts = item.split("=");
+                initial[parts[0]] = decodeURIComponent(parts[1]);
+            }
+            return initial;
+        }, {});
+    window.location.hash = "";
+
+    if (hash.access_token) {
+        fetch("http://localhost:8080", {
+            method: "POST",
+            body: hash.access_token
+        })
+    } else {
+        console.error("No access_token present in hash")
+    }
+</script>
+</body>
+</html>

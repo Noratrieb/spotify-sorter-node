@@ -2,9 +2,17 @@
   "name": "spotify-sorter-node",
   "author": "Nilstrieb",
   "license": "MIT",
+  "scripts": {
+    "prestart": "yarn tsc",
+    "start": "node bin/index.js"
+  },
   "dependencies": {
     "@types/node": "^16.9.2",
-    "typescript": "^4.4.3"
+    "@types/spotify-web-api-js": "^0.21.0",
+    "open": "^8.2.1",
+    "spotify-web-api-js": "^1.5.1",
+    "typescript": "^4.4.3",
+    "xhr2": "^0.2.1"
   },
   "devDependencies": {
     "ts-node": "^10.2.1"
